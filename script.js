@@ -1,67 +1,102 @@
-document.getElementById('mobile-menu-button').addEventListener('click', function() {
-    var mobileNavbar = document.getElementById('mobile-navbar');
-    mobileNavbar.classList.toggle('active'); // Toggle the "active" class
-});
+document.addEventListener("DOMContentLoaded", function () {
+    gsap.registerPlugin(ScrollTrigger);
 
-
-
-
-
-
-// Scroll-to-Top Button Logic
-const scrollToTopBtn = document.getElementById("scrollToTopBtn");
-const isMobile = window.matchMedia("(max-width: 768px)").matches; // Check screen size
-
-// Show the button when the user scrolls down 100px (only if not on mobile)
-window.onscroll = function () {
-    if (!isMobile && (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100)) {
-        scrollToTopBtn.style.display = "block";
-    } else {
-        scrollToTopBtn.style.display = "none";
-    }
-};
-
-// Scroll back to the top when the button is clicked
-scrollToTopBtn.addEventListener("click", function () {
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth", // Smooth scrolling
-    });
-});
-
-
-
-
-
-
-
-
-
-// Highlight the active section in the navbar
-const sections = document.querySelectorAll("section");
-const navLinks = document.querySelectorAll(".navbar ul li a");
-
-window.addEventListener("scroll", () => {
-    let currentSectionId = null;
-
-    // Loop through all sections to find the one in the viewport
-    sections.forEach((section) => {
-        const sectionTop = section.offsetTop - 80; // Adjust for some offset (e.g., navbar height)
-        const sectionBottom = sectionTop + section.offsetHeight;
-
-        // Check if the current scroll position is within this section
-        if (window.scrollY >= sectionTop && window.scrollY < sectionBottom) {
-            currentSectionId = section.getAttribute("id");
-        }
+    // 🚀 Section Fade-in Animation on Scroll
+    gsap.utils.toArray("section").forEach((section) => {
+        gsap.fromTo(
+            section,
+            { opacity: 0, y: 50 },
+            {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                ease: "power2.out",
+                scrollTrigger: {
+                    trigger: section,
+                    start: "top 85%",
+                    toggleActions: "play none none none"
+                }
+            }
+        );
     });
 
-    // Update active class for navbar links
-    navLinks.forEach((link) => {
-        const linkTarget = link.getAttribute("href").substring(1); // Get the section ID
-        if (linkTarget === currentSectionId) {
-            link.classList.add("active");
+    // 📱 Mobile Navbar Toggle
+    const mobileMenuButton = document.getElementById("mobile-menu-button");
+    const mobileNavbar = document.getElementById("mobile-navbar");
+
+    mobileMenuButton.addEventListener("click", function () {
+        if (mobileNavbar.classList.contains("active")) {
+            gsap.to(mobileNavbar, { y: -20, opacity: 0, duration: 0.3 });
+            mobileNavbar.classList.remove("active");
         } else {
-            link.classList.remove("active");
+            gsap.fromTo(mobileNavbar, { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3 });
+            mobileNavbar.classList.add("active");
         }
     });
+
+    // 🔼 Scroll-to-Top Button Logic
+    const scrollToTopBtn = document.getElementById("scrollToTopBtn");
+
+    window.onscroll = function () {
+        if (document.documentElement.scrollTop > 100) {
+            gsap.to(scrollToTopBtn, { opacity: 1, pointerEvents: "auto", duration: 0.3 });
+        } else {
+            gsap.to(scrollToTopBtn, { opacity: 0, pointerEvents: "none", duration: 0.3 });
+        }
+    };
+
+    // 🖱️ Smooth Scroll to Top
+    scrollToTopBtn.addEventListener("click", function () {
+        gsap.to(window, { scrollTo: { y: 0 }, duration: 1 });
+    });
+
+    // 🔹 Navbar Section Highlighting on Scroll
+    const sections = document.querySelectorAll("section");
+    const navLinks = document.querySelectorAll(".navbar ul li a");
+
+    window.addEventListener("scroll", () => {
+        let currentSection = "";
+
+        sections.forEach((section) => {
+            const sectionTop = section.offsetTop - 100;
+            if (window.scrollY >= sectionTop) {
+                currentSection = section.getAttribute("id");
+            }
+        });
+
+        navLinks.forEach((link) => {
+            if (link.getAttribute("href").substring(1) === currentSection) {
+                gsap.to(link, { color: "#0073e6", fontWeight: "bold", duration: 0.3 });
+            } else {
+                gsap.to(link, { color: "#333", fontWeight: "normal", duration: 0.3 });
+            }
+        });
+    });
+
+    // 🎨 Micro-Interaction: Navbar Hover Effect
+    navLinks.forEach((link) => {
+        link.addEventListener("mouseover", function () {
+            gsap.to(link, { scale: 1.1, color: "#0073e6", duration: 0.2 });
+        });
+        link.addEventListener("mouseout", function () {
+            gsap.to(link, { scale: 1, color: "", duration: 0.2 });
+        });
+    });
+
+    // 🎯 Scroll-to-Top Button Hover Effect
+    scrollToTopBtn.addEventListener("mouseover", function () {
+        gsap.to(scrollToTopBtn, { scale: 1.1, duration: 0.3 });
+    });
+    scrollToTopBtn.addEventListener("mouseout", function () {
+        gsap.to(scrollToTopBtn, { scale: 1, duration: 0.3 });
+    });
 });
+
+
+
+
+
+
+
+
+
