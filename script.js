@@ -1,102 +1,275 @@
-document.addEventListener("DOMContentLoaded", function () {
-    gsap.registerPlugin(ScrollTrigger);
+// script.js
+// Updated JavaScript with GSAP
+document.addEventListener('DOMContentLoaded', function () {
+    // Initialize GSAP ScrollSmoother
+    const smoother = ScrollSmoother.create({
+        smooth: 1.5,
+        effects: true,
+        normalizeScroll: true,
+        ignoreMobileResize: true
+    });
 
-    // 🚀 Section Fade-in Animation on Scroll
-    gsap.utils.toArray("section").forEach((section) => {
-        gsap.fromTo(
-            section,
-            { opacity: 0, y: 50 },
-            {
-                opacity: 1,
-                y: 0,
-                duration: 1,
-                ease: "power2.out",
-                scrollTrigger: {
-                    trigger: section,
-                    start: "top 85%",
-                    toggleActions: "play none none none"
+    // Mobile Menu Toggle
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileNavbar = document.getElementById('mobile-navbar');
+
+    mobileMenuButton.addEventListener('click', function () {
+        mobileNavbar.classList.toggle('active');
+        this.classList.toggle('active');
+    });
+
+    // Smooth Scroll for Anchor Links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+
+            if (target) {
+                smoother.scrollTo(target, true, "top top");
+
+                if (mobileNavbar.classList.contains('active')) {
+                    mobileNavbar.classList.remove('active');
+                    mobileMenuButton.classList.remove('active');
                 }
             }
-        );
+        });
     });
 
-    // 📱 Mobile Navbar Toggle
-    const mobileMenuButton = document.getElementById("mobile-menu-button");
-    const mobileNavbar = document.getElementById("mobile-navbar");
+    // Scroll-to-Top Button
+    const scrollToTopBtn = document.getElementById('scrollToTopBtn');
 
-    mobileMenuButton.addEventListener("click", function () {
-        if (mobileNavbar.classList.contains("active")) {
-            gsap.to(mobileNavbar, { y: -20, opacity: 0, duration: 0.3 });
-            mobileNavbar.classList.remove("active");
-        } else {
-            gsap.fromTo(mobileNavbar, { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3 });
-            mobileNavbar.classList.add("active");
+    ScrollTrigger.create({
+        onUpdate: self => {
+            self.direction === -1 ? scrollToTopBtn.classList.add('show') : scrollToTopBtn.classList.remove('show');
         }
     });
 
-    // 🔼 Scroll-to-Top Button Logic
-    const scrollToTopBtn = document.getElementById("scrollToTopBtn");
-
-    window.onscroll = function () {
-        if (document.documentElement.scrollTop > 100) {
-            gsap.to(scrollToTopBtn, { opacity: 1, pointerEvents: "auto", duration: 0.3 });
-        } else {
-            gsap.to(scrollToTopBtn, { opacity: 0, pointerEvents: "none", duration: 0.3 });
-        }
-    };
-
-    // 🖱️ Smooth Scroll to Top
-    scrollToTopBtn.addEventListener("click", function () {
-        gsap.to(window, { scrollTo: { y: 0 }, duration: 1 });
+    scrollToTopBtn.addEventListener('click', () => {
+        smoother.scrollTo(0, true);
     });
 
-    // 🔹 Navbar Section Highlighting on Scroll
+    // Add subtle animation to profile section
+    gsap.from("#about", {
+        duration: 1.5,
+        y: 50,
+        opacity: 0,
+        ease: "power3.out"
+    });
+
+    // Animate other sections
+    gsap.utils.toArray("section").forEach(section => {
+        gsap.from(section, {
+            scrollTrigger: {
+                trigger: section,
+                start: "top center+=100",
+                toggleActions: "play none none reverse"
+            },
+            opacity: 0,
+            y: 50,
+            duration: 0.8
+        });
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', () => ScrollTrigger.refresh());
+
+    // **Fixed Navbar on Scroll**
+    const navbar = document.getElementById("navbar");
+    navbar.classList.add("fixed-navbar");
+
+    // **Highlight Active Section in Navbar**
     const sections = document.querySelectorAll("section");
-    const navLinks = document.querySelectorAll(".navbar ul li a");
+    const navLinks = document.querySelectorAll(".nav-link");
 
-    window.addEventListener("scroll", () => {
-        let currentSection = "";
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Remove active class from all links
+                navLinks.forEach(link => link.classList.remove("active"));
 
-        sections.forEach((section) => {
-            const sectionTop = section.offsetTop - 100;
-            if (window.scrollY >= sectionTop) {
-                currentSection = section.getAttribute("id");
+                // Find corresponding link and add active class
+                const id = entry.target.getAttribute("id");
+                const activeLink = document.querySelector(`a[href="#${id}"]`);
+                if (activeLink) {
+                    activeLink.classList.add("active");
+                }
             }
         });
+    }, { threshold: 0.6 }); // Trigger when 60% of the section is in view
 
-        navLinks.forEach((link) => {
-            if (link.getAttribute("href").substring(1) === currentSection) {
-                gsap.to(link, { color: "#0073e6", fontWeight: "bold", duration: 0.3 });
-            } else {
-                gsap.to(link, { color: "#333", fontWeight: "normal", duration: 0.3 });
-            }
-        });
-    });
-
-    // 🎨 Micro-Interaction: Navbar Hover Effect
-    navLinks.forEach((link) => {
-        link.addEventListener("mouseover", function () {
-            gsap.to(link, { scale: 1.1, color: "#0073e6", duration: 0.2 });
-        });
-        link.addEventListener("mouseout", function () {
-            gsap.to(link, { scale: 1, color: "", duration: 0.2 });
-        });
-    });
-
-    // 🎯 Scroll-to-Top Button Hover Effect
-    scrollToTopBtn.addEventListener("mouseover", function () {
-        gsap.to(scrollToTopBtn, { scale: 1.1, duration: 0.3 });
-    });
-    scrollToTopBtn.addEventListener("mouseout", function () {
-        gsap.to(scrollToTopBtn, { scale: 1, duration: 0.3 });
-    });
+    sections.forEach(section => observer.observe(section));
 });
 
 
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize GSAP ScrollSmoother
+    const smoother = ScrollSmoother.create({
+        smooth: 1.5,
+        effects: true,
+        normalizeScroll: true,
+        ignoreMobileResize: true
+    });
 
+    // Mobile Menu Toggle
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileNavbar = document.getElementById('mobile-navbar');
+    
+    mobileMenuButton.addEventListener('click', function() {
+        mobileNavbar.classList.toggle('active');
+        this.classList.toggle('active');
+    });
 
+    // Smooth Scroll for Anchor Links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            
+            if (target) {
+                smoother.scrollTo(target, true, "top top");
+                
+                if (mobileNavbar.classList.contains('active')) {
+                    mobileNavbar.classList.remove('active');
+                    mobileMenuButton.classList.remove('active');
+                }
+            }
+        });
+    });
 
+    // Scroll-to-Top Button
+    const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+    
+    ScrollTrigger.create({
+        onUpdate: self => {
+            self.direction === -1 ? scrollToTopBtn.classList.add('show') : scrollToTopBtn.classList.remove('show');
+        }
+    });
 
+    scrollToTopBtn.addEventListener('click', () => {
+        smoother.scrollTo(0, true);
+    });
 
+    // Add subtle animation to profile section
+    gsap.from("#about", {
+        duration: 1.5,
+        y: 50,
+        opacity: 0,
+        ease: "power3.out"
+    });
 
+    // Animate other sections
+    gsap.utils.toArray("section").forEach(section => {
+        gsap.from(section, {
+            scrollTrigger: {
+                trigger: section,
+                start: "top center+=100",
+                toggleActions: "play none none reverse"
+            },
+            opacity: 0,
+            y: 50,
+            duration: 0.8
+        });
+    });
 
+    // Handle window resize
+    window.addEventListener('resize', () => ScrollTrigger.refresh());
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Mobile Menu Toggle
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileNavbar = document.getElementById('mobile-navbar');
+    
+    mobileMenuButton.addEventListener('click', function() {
+        mobileNavbar.classList.toggle('active');
+        this.classList.toggle('active');
+    });
+
+    // Smooth Scroll for Anchor Links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+
+                // Close mobile menu after clicking link
+                if (mobileNavbar.classList.contains('active')) {
+                    mobileNavbar.classList.remove('active');
+                    mobileMenuButton.classList.remove('active');
+                }
+            }
+        });
+    });
+
+    // Scroll-to-Top Button
+    const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+    
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 100) {
+            scrollToTopBtn.style.display = 'block';
+            setTimeout(() => {
+                scrollToTopBtn.style.opacity = '1';
+            }, 100);
+        } else {
+            scrollToTopBtn.style.opacity = '0';
+            setTimeout(() => {
+                scrollToTopBtn.style.display = 'none';
+            }, 300);
+        }
+    });
+
+    scrollToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+
+    // Tooltip Interactions
+    const tooltips = document.querySelectorAll('.tooltip');
+    
+    tooltips.forEach(tooltip => {
+        tooltip.addEventListener('mouseenter', function() {
+            this.querySelector('.tooltip-text').style.visibility = 'visible';
+            this.querySelector('.tooltip-text').style.opacity = '1';
+        });
+
+        tooltip.addEventListener('mouseleave', function() {
+            this.querySelector('.tooltip-text').style.visibility = 'hidden';
+            this.querySelector('.tooltip-text').style.opacity = '0';
+        });
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!mobileNavbar.contains(e.target) && !mobileMenuButton.contains(e.target)) {
+            mobileNavbar.classList.remove('active');
+            mobileMenuButton.classList.remove('active');
+        }
+    });
+
+    // Project Image Hover Effect
+    document.querySelectorAll('.project-image').forEach(img => {
+        img.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.03)';
+            this.style.transition = 'transform 0.3s ease';
+        });
+
+        img.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+        });
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+            mobileNavbar.classList.remove('active');
+            mobileMenuButton.classList.remove('active');
+        }
+    });
+});
