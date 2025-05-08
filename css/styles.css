@@ -12,8 +12,8 @@
   --color-accent-hover: rgba(26, 54, 93, 0.08);
   --font-serif: "Merriweather", serif;
   --sidebar-width: 260px; /* Reduced from 280px */
-  --transition-fast: all 0.2s ease;
-  --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.03);
   --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.05);
   --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.06);
@@ -30,7 +30,7 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 70px;
-  font-size: 15px; /* Reduced from 16px */
+  font-size: 15px;
 }
 
 body {
@@ -142,11 +142,11 @@ button {
 }
 
 .profile-image {
-  width: 120px; /* Reduced from 130px */
-  height: 120px; /* Reduced from 130px */
-  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  border-radius: 12px; /* Changed from 50% to create rounded rectangle */
   overflow: hidden;
-  margin-bottom: 1.15rem; /* Reduced from 1.25rem */
+  margin-bottom: 1.15rem;
   border: 2px solid white;
   box-shadow: var(--shadow-sm);
 }
@@ -155,7 +155,7 @@ button {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 50%;
+  border-radius: 12px; /* Changed from 50% to match container */
 }
 
 .profile-name {
@@ -181,12 +181,12 @@ button {
   padding: 0.7rem 0.5rem;
   color: var(--color-text);
   border-bottom: 1px solid #eaeaea;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   border-radius: 4px;
   margin-bottom: 2px;
   font-weight: 300;
   font-size: 0.95rem;
+  will-change: transform, opacity;
 }
 
 .nav-link::after {
@@ -203,6 +203,7 @@ button {
 .nav-link:hover {
   color: var(--color-accent);
   background-color: rgba(26, 54, 93, 0.03);
+  transform: translateX(5px);
 }
 
 .nav-link:hover::after {
@@ -213,6 +214,7 @@ button {
   color: var(--color-accent);
   font-weight: 500;
   background-color: rgba(26, 54, 93, 0.05);
+  transform: translateX(5px);
 }
 
 .nav-link.active::after {
@@ -317,7 +319,7 @@ button {
   position: relative;
   padding-left: 1.3rem;
   scroll-margin-top: 70px;
-  transition: all 0.5s ease;
+  will-change: transform, opacity;
 }
 
 .section::before {
@@ -512,6 +514,85 @@ button {
   font-size: 0.95rem;
   line-height: 1.4;
   color: var(--color-text);
+}
+
+/* Custom Bullet Point Styles */
+.custom-bullet {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: var(--color-text);
+}
+
+.custom-bullet::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.5rem;
+  width: 6px;
+  height: 6px;
+  background-color: var(--color-accent);
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+
+/* Update existing list styles */
+.project-details li,
+.fieldtrip-details li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: var(--color-text);
+}
+
+.project-details li::before,
+.fieldtrip-details li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.5rem;
+  width: 6px;
+  height: 6px;
+  background-color: var(--color-accent);
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+
+/* Remove the bullet character from existing lists */
+.project-details li,
+.fieldtrip-details li {
+  list-style: none;
+}
+
+/* Ensure consistent spacing */
+.project-details,
+.fieldtrip-details {
+  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .custom-bullet,
+  .project-details li,
+  .fieldtrip-details li {
+    padding-left: 1.3rem;
+    font-size: 0.92rem;
+  }
+  
+  .custom-bullet::before,
+  .project-details li::before,
+  .fieldtrip-details li::before {
+    width: 5px;
+    height: 5px;
+  }
 }
 
 /* Mobile view adjustments */
@@ -741,22 +822,22 @@ button {
   top: 1rem;
   right: 1rem;
   z-index: 1000;
-  background: var(--color-primary);
+  background: white;
   border: none;
-  border-radius: 50%;
-  width: 3rem;
-  height: 3rem;
+  border-radius: 4px;
+  width: 2.5rem;
+  height: 2.5rem;
   padding: 0.5rem;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
 }
 
 .mobile-nav-toggle svg {
   width: 24px;
   height: 24px;
-  color: white;
-  transition: all 0.3s ease;
+  color: var(--color-accent);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .mobile-nav-toggle .hamburger-icon,
@@ -765,26 +846,31 @@ button {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  transition: opacity 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .mobile-nav-toggle .close-icon {
   opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, -50%) rotate(90deg) scale(0.8);
 }
 
 .mobile-nav-toggle.active .hamburger-icon {
   opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, -50%) rotate(-90deg) scale(0.8);
 }
 
 .mobile-nav-toggle.active .close-icon {
   opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%) rotate(0deg) scale(1);
 }
 
 @media (max-width: 768px) {
   .sidebar {
     width: 100%;
-    height: auto;
-    max-height: 80vh;
+    height: 100vh;
     position: fixed;
     top: 0;
     left: 0;
@@ -802,15 +888,13 @@ button {
                 opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
                 visibility 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     background-color: var(--color-background);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   }
 
   .sidebar.active {
     transform: translateX(0);
     opacity: 1;
     visibility: visible;
-    height: 100vh;
-    max-height: 100vh;
-    overflow-y: auto;
   }
 
   .mobile-nav-toggle {
@@ -1155,5 +1239,25 @@ button {
   .courses-grid {
     grid-template-columns: 1fr;
     gap: 0.5rem;
+  }
+}
+
+/* Smoother section transitions */
+.section:target {
+  animation: smoothScroll 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes smoothScroll {
+  0% {
+    opacity: 0.8;
+    transform: translateY(30px);
+  }
+  50% {
+    opacity: 0.9;
+    transform: translateY(15px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

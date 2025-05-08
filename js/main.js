@@ -133,16 +133,6 @@ document.addEventListener('DOMContentLoaded', function() {
   mobileNavToggle.addEventListener('click', function() {
     sidebar.classList.toggle('active');
     this.classList.toggle('active');
-    
-    // Toggle between hamburger and X icons
-    if (sidebar.classList.contains('active')) {
-      hamburgerIcon.style.display = 'none';
-      closeIcon.style.display = 'block';
-    } else {
-      hamburgerIcon.style.display = 'block';
-      closeIcon.style.display = 'none';
-    }
-    
     this.setAttribute('aria-expanded', sidebar.classList.contains('active'));
   });
   
@@ -155,34 +145,6 @@ document.addEventListener('DOMContentLoaded', function() {
       if (window.innerWidth <= 768) {
         sidebar.classList.remove('active');
         mobileNavToggle.classList.remove('active');
-        hamburgerIcon.style.display = 'block';
-        closeIcon.style.display = 'none';
-        mobileNavToggle.setAttribute('aria-expanded', 'false');
-      }
-      
-      const targetId = this.getAttribute('href');
-      const targetSection = document.querySelector(targetId);
-      
-      if (targetSection) {
-        // Set smooth scroll to target within contentContainer
-        contentContainer.scrollTo({
-          top: targetSection.offsetTop - 20,
-          behavior: 'smooth'
-        });
-      }
-    });
-  });
-  
-  // ----- Smooth Scrolling for Navigation Links -----
-  navLinks.forEach(link => {
-    link.addEventListener('click', function(e) {
-      e.preventDefault();
-      
-      // Close mobile menu if open
-      if (window.innerWidth <= 768) {
-        sidebar.classList.remove('active');
-        hamburgerIcon.style.display = 'block';
-        closeIcon.style.display = 'none';
         mobileNavToggle.setAttribute('aria-expanded', 'false');
       }
       
@@ -321,5 +283,124 @@ document.addEventListener('DOMContentLoaded', function() {
     item.style.opacity = "0";
     item.style.transform = "translateY(20px)";
     appearOnScroll.observe(item);
+  });
+});
+
+// Initialize GSAP ScrollToPlugin
+gsap.registerPlugin(ScrollToPlugin);
+
+// Enhanced smooth scrolling for navigation links with GSAP
+document.querySelectorAll('.nav-link').forEach(link => {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    const targetId = this.getAttribute('href');
+    const targetSection = document.querySelector(targetId);
+    
+    if (targetSection) {
+      // Add active class to clicked link
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+      this.classList.add('active');
+      
+      // Smooth scroll with GSAP
+      gsap.to(window, {
+        duration: 1.5,
+        scrollTo: {
+          y: targetSection,
+          offsetY: 70,
+          autoKill: false
+        },
+        ease: "power2.inOut"
+      });
+      
+      // Close mobile menu if open
+      if (window.innerWidth <= 768) {
+        const sidebar = document.querySelector('.sidebar');
+        const mobileNavToggle = document.querySelector('.mobile-nav-toggle');
+        if (sidebar.classList.contains('active')) {
+          sidebar.classList.remove('active');
+          mobileNavToggle.classList.remove('active');
+        }
+      }
+    }
+  });
+});
+
+// Update active section on scroll with GSAP
+let scrollTimeout;
+window.addEventListener('scroll', () => {
+  clearTimeout(scrollTimeout);
+  scrollTimeout = setTimeout(() => {
+    const sections = document.querySelectorAll('.section');
+    const scrollPosition = window.scrollY + 100;
+
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop;
+      const sectionHeight = section.offsetHeight;
+      const sectionId = section.getAttribute('id');
+      
+      if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+        // Remove active class from all links with GSAP
+        document.querySelectorAll('.nav-link').forEach(link => {
+          gsap.to(link, {
+            duration: 0.6,
+            ease: "power2.inOut",
+            onComplete: () => link.classList.remove('active')
+          });
+        });
+        
+        // Add active class to current section's link
+        const activeLink = document.querySelector(`.nav-link[href="#${sectionId}"]`);
+        if (activeLink) {
+          gsap.to(activeLink, {
+            duration: 0.6,
+            ease: "power2.inOut",
+            onComplete: () => activeLink.classList.add('active')
+          });
+        }
+        
+        // Add active class to section with GSAP
+        sections.forEach(s => {
+          gsap.to(s, {
+            duration: 0.8,
+            ease: "power2.inOut",
+            onComplete: () => s.classList.remove('active')
+          });
+        });
+        
+        gsap.to(section, {
+          duration: 0.8,
+          ease: "power2.inOut",
+          onComplete: () => section.classList.add('active')
+        });
+      }
+    });
+  }, 50);
+});
+
+// Initialize GSAP animations for sections
+gsap.utils.toArray('.section').forEach(section => {
+  gsap.from(section, {
+    opacity: 0,
+    y: 30,
+    duration: 1,
+    ease: "power2.out",
+    scrollTrigger: {
+      trigger: section,
+      start: "top 80%",
+      end: "top 20%",
+      toggleActions: "play none none reverse"
+    }
+  });
+});
+
+// Smooth scroll for back to top button
+document.getElementById('backToTop').addEventListener('click', function() {
+  gsap.to(window, {
+    duration: 1.5,
+    scrollTo: {
+      y: 0,
+      autoKill: false
+    },
+    ease: "power2.inOut"
   });
 });
