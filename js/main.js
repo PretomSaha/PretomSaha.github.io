@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // ----- Carousel Functionality -----
   function initCarousel() {
-    const carousels = document.querySelectorAll('.carousel');
+    const carousels = document.querySelectorAll('.carousel, .drawing-carousel');
     let globalAutoSlideInterval;
     
     function startGlobalAutoSlide() {
@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
           const nextBtn = carousel.querySelector('.next');
           if (nextBtn) nextBtn.click();
         });
-      }, 2500);
+      }, 5000); // Increased to 5 seconds for better viewing
     }
 
     function stopGlobalAutoSlide() {
@@ -194,68 +194,90 @@ document.addEventListener('DOMContentLoaded', function() {
       const nextBtn = carousel.querySelector('.next');
       let currentIndex = 0;
       const totalItems = items.length;
+      let isTransitioning = false;
 
       function updateCarousel() {
+        if (isTransitioning) return;
+        isTransitioning = true;
+
         // Remove active class from all items and indicators
         items.forEach(item => {
-          item.classList.remove('active', 'prev');
+          item.classList.remove('active');
+          item.classList.remove('prev');
         });
         indicators.forEach(indicator => indicator.classList.remove('active'));
-        
+
         // Add active class to current item and indicator
         items[currentIndex].classList.add('active');
-        indicators[currentIndex].classList.add('active');
+        if (indicators[currentIndex]) {
+          indicators[currentIndex].classList.add('active');
+        }
 
-        // Add prev class to previous item
+        // Add prev class to previous item for smooth transition
         const prevIndex = (currentIndex - 1 + totalItems) % totalItems;
         items[prevIndex].classList.add('prev');
+
+        // Reset transition flag after animation
+        setTimeout(() => {
+          isTransitioning = false;
+        }, 600); // Match this with CSS transition duration
       }
 
       function nextSlide() {
+        if (isTransitioning) return;
         currentIndex = (currentIndex + 1) % totalItems;
         updateCarousel();
       }
 
       function prevSlide() {
+        if (isTransitioning) return;
         currentIndex = (currentIndex - 1 + totalItems) % totalItems;
         updateCarousel();
       }
 
-      // Add click event listeners
-      if (prevBtn) {
-        prevBtn.addEventListener('click', () => {
-          prevSlide();
-          stopGlobalAutoSlide();
-          startGlobalAutoSlide();
-        });
-      }
-      if (nextBtn) {
-        nextBtn.addEventListener('click', () => {
-          nextSlide();
-          stopGlobalAutoSlide();
-          startGlobalAutoSlide();
-        });
-      }
-      
-      // Add click event listeners to indicators
+      // Event listeners for controls
+      if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+      if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+
+      // Event listeners for indicators
       indicators.forEach((indicator, index) => {
         indicator.addEventListener('click', () => {
+          if (isTransitioning) return;
           currentIndex = index;
           updateCarousel();
-          stopGlobalAutoSlide();
-          startGlobalAutoSlide();
         });
       });
 
-      // Pause auto-slide when hovering over any carousel
+      // Touch events for mobile swipe
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      carousel.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+
+      carousel.addEventListener('touchend', e => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+      }, { passive: true });
+
+      function handleSwipe() {
+        const swipeThreshold = 50;
+        if (touchEndX < touchStartX - swipeThreshold) {
+          nextSlide();
+        } else if (touchEndX > touchStartX + swipeThreshold) {
+          prevSlide();
+        }
+      }
+
+      // Pause auto-slide on hover/touch
       carousel.addEventListener('mouseenter', stopGlobalAutoSlide);
       carousel.addEventListener('mouseleave', startGlobalAutoSlide);
-
-      // Initialize carousel
-      updateCarousel();
+      carousel.addEventListener('touchstart', stopGlobalAutoSlide, { passive: true });
+      carousel.addEventListener('touchend', startGlobalAutoSlide, { passive: true });
     });
 
-    // Start global auto-slide
+    // Start auto-slide
     startGlobalAutoSlide();
   }
 
