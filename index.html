@@ -36,7 +36,7 @@
           
           <div class="profile-buttons">
             <a href="https://drive.google.com/file/d/1eC1ONUTdcwVM1NDsoRjp0BAzcayYMQnF/view?usp=drive_link" class="btn btn-primary">CV</a>
-            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=pretomsaha2018@gmail.com" target="_blank" class="btn btn-secondary">Email</a>
+            <a href="#" data-email="pretomsaha2018@gmail.com" class="btn btn-secondary email-link">Email</a>
           </div>
         </div>
         
@@ -70,7 +70,7 @@
           <h1 class="profile-name">Pretom Saha</h1>
           <div class="profile-buttons">
             <a href="https://drive.google.com/file/d/1eC1ONUTdcwVM1NDsoRjp0BAzcayYMQnF/view?usp=drive_link" class="btn btn-primary">CV</a>
-            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=pretomsaha2018@gmail.com" target="_blank" class="btn btn-secondary">Email</a>
+            <a href="#" data-email="pretomsaha2018@gmail.com" class="btn btn-secondary email-link">Email</a>
           </div>
         </div>
 
@@ -399,7 +399,7 @@
                 <p class="reference-designation">Associate Professor</p>
                 <p class="reference-department">Department of Oceanography</p>
                 <p class="reference-university">Shahjalal University of Science & Technology</p>
-                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=subratasrk-ocg@sust.edu" target="_blank" class="reference-email">
+                <a href="#" data-email="subratasrk-ocg@sust.edu" class="reference-email email-link">
                   <i class="fas fa-envelope"></i> subratasrk-ocg@sust.edu
                 </a>
               </div>
@@ -409,7 +409,7 @@
                 <p class="reference-designation">Lecturer</p>
                 <p class="reference-department">Department of Oceanography</p>
                 <p class="reference-university">Shahjalal University of Science & Technology</p>
-                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=absiddique-ocg@sust.edu" target="_blank" class="reference-email">
+                <a href="#" data-email="absiddique-ocg@sust.edu" class="reference-email email-link">
                   <i class="fas fa-envelope"></i> absiddique-ocg@sust.edu
                 </a>
               </div>
@@ -440,5 +440,34 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
   <script src="js/main.js"></script>
+  
+  <!-- Email handling script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Function to detect mobile devices
+      function isMobileDevice() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      }
+
+      // Function to handle email clicks
+      function handleEmailClick(e) {
+        e.preventDefault();
+        const email = this.getAttribute('data-email');
+        
+        if (isMobileDevice()) {
+          // For mobile devices, use mailto to open default mail app
+          window.location.href = `mailto:${email}`;
+        } else {
+          // For desktop, open Gmail compose in new tab
+          window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${email}`, '_blank');
+        }
+      }
+
+      // Add click handlers to all email links
+      document.querySelectorAll('.email-link').forEach(link => {
+        link.addEventListener('click', handleEmailClick);
+      });
+    });
+  </script>
 </body>
 </html>
