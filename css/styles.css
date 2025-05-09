@@ -412,7 +412,7 @@ button {
 
 .research-content {
   background-color: #f9f9f9;
-  padding: 0.5rem;
+  padding: 1.5rem;
   margin-bottom: 0.9rem;
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-sm);
