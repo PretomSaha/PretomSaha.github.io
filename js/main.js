@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
           const nextBtn = carousel.querySelector('.next');
           if (nextBtn) nextBtn.click();
         });
-      }, 5000); // Increased to 5 seconds for better viewing
+      }, 6000); // Increased to 6 seconds for better viewing with smoother transitions
     }
 
     function stopGlobalAutoSlide() {
@@ -195,6 +195,10 @@ document.addEventListener('DOMContentLoaded', function() {
       let currentIndex = 0;
       const totalItems = items.length;
       let isTransitioning = false;
+      let touchStartX = 0;
+      let touchEndX = 0;
+      let touchStartTime = 0;
+      let touchEndTime = 0;
 
       function updateCarousel() {
         if (isTransitioning) return;
@@ -220,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Reset transition flag after animation
         setTimeout(() => {
           isTransitioning = false;
-        }, 600); // Match this with CSS transition duration
+        }, 800); // Match this with CSS transition duration
       }
 
       function nextSlide() {
@@ -236,12 +240,23 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       // Event listeners for controls
-      if (prevBtn) prevBtn.addEventListener('click', prevSlide);
-      if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+      if (prevBtn) {
+        prevBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          prevSlide();
+        });
+      }
+      if (nextBtn) {
+        nextBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          nextSlide();
+        });
+      }
 
       // Event listeners for indicators
       indicators.forEach((indicator, index) => {
-        indicator.addEventListener('click', () => {
+        indicator.addEventListener('click', (e) => {
+          e.preventDefault();
           if (isTransitioning) return;
           currentIndex = index;
           updateCarousel();
@@ -249,24 +264,29 @@ document.addEventListener('DOMContentLoaded', function() {
       });
 
       // Touch events for mobile swipe
-      let touchStartX = 0;
-      let touchEndX = 0;
-
       carousel.addEventListener('touchstart', e => {
         touchStartX = e.changedTouches[0].screenX;
+        touchStartTime = Date.now();
       }, { passive: true });
 
       carousel.addEventListener('touchend', e => {
         touchEndX = e.changedTouches[0].screenX;
+        touchEndTime = Date.now();
         handleSwipe();
       }, { passive: true });
 
       function handleSwipe() {
         const swipeThreshold = 50;
-        if (touchEndX < touchStartX - swipeThreshold) {
-          nextSlide();
-        } else if (touchEndX > touchStartX + swipeThreshold) {
-          prevSlide();
+        const swipeTime = touchEndTime - touchStartTime;
+        const swipeDistance = touchEndX - touchStartX;
+        
+        // Only trigger swipe if it's quick enough and long enough
+        if (swipeTime < 300 && Math.abs(swipeDistance) > swipeThreshold) {
+          if (swipeDistance < 0) {
+            nextSlide();
+          } else {
+            prevSlide();
+          }
         }
       }
 
@@ -275,6 +295,15 @@ document.addEventListener('DOMContentLoaded', function() {
       carousel.addEventListener('mouseleave', startGlobalAutoSlide);
       carousel.addEventListener('touchstart', stopGlobalAutoSlide, { passive: true });
       carousel.addEventListener('touchend', startGlobalAutoSlide, { passive: true });
+
+      // Keyboard navigation
+      carousel.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') {
+          prevSlide();
+        } else if (e.key === 'ArrowRight') {
+          nextSlide();
+        }
+      });
     });
 
     // Start auto-slide

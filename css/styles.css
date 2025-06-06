@@ -697,9 +697,8 @@ button {
   overflow: hidden;
   width: 100%;
   aspect-ratio: 1/1;
-  border-radius: var(--border-radius);
-  background-color: #f8f9fa;
-  margin-bottom: 2rem;
+  border-radius: 0;
+  background-color: #000000;
 }
 
 .drawing-carousel .carousel-inner {
@@ -716,8 +715,13 @@ button {
   height: 100%;
   opacity: 0;
   transform: translateX(100%);
-  transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1;
+  will-change: transform, opacity;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #000000;
 }
 
 .drawing-carousel .carousel-item.active {
@@ -728,16 +732,18 @@ button {
 
 .drawing-carousel .carousel-item.prev {
   transform: translateX(-100%);
+  opacity: 0;
   z-index: 1;
 }
 
 .drawing-carousel .carousel-image {
-  width: 100%;
-  height: 100%;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
-  border-radius: var(--border-radius);
-  background-color: rgb(7, 0, 0);
-  transition: transform 0.8s ease-in-out;
+  border-radius: 0;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .drawing-carousel .carousel-caption {
@@ -763,15 +769,18 @@ button {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.5);
+  width: 44px;
+  height: 44px;
+  background: rgba(0, 0, 0, 0.7);
   border: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  border-radius: 0;
   cursor: pointer;
   z-index: 3;
   opacity: 0;
-  transition: opacity 0.4s ease-in-out, background-color 0.4s ease-in-out;
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .drawing-carousel:hover .carousel-control {
@@ -779,7 +788,8 @@ button {
 }
 
 .drawing-carousel-control:hover {
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.9);
+  transform: translateY(-50%) scale(1.1);
 }
 
 .drawing-carousel .carousel-indicators {
@@ -790,19 +800,15 @@ button {
   display: none;
 }
 
+/* Mobile adjustments for drawing carousel */
 @media (max-width: 768px) {
-  .beyond-content {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    align-items: start;
+  .drawing-carousel {
+    aspect-ratio: 4/3; /* Slightly taller for better art viewing on mobile */
   }
   
-  .beyond-image {
-    aspect-ratio: 16/9;
-  }
-  
-  .beyond-details {
-    justify-content: flex-start;
+  .drawing-carousel .carousel-image {
+    max-width: 95%;
+    max-height: 95%;
   }
 }
 
@@ -1211,8 +1217,8 @@ button {
   overflow: hidden;
   width: 100%;
   aspect-ratio: 1/1;
-  border-radius: var(--border-radius);
-  background-color: #f8f9fa;
+  border-radius: 0;
+  background-color: #000000;
 }
 
 .carousel-inner {
@@ -1229,8 +1235,9 @@ button {
   height: 100%;
   opacity: 0;
   transform: translateX(100%);
-  transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1;
+  will-change: transform, opacity;
 }
 
 .carousel-item.active {
@@ -1241,16 +1248,16 @@ button {
 
 .carousel-item.prev {
   transform: translateX(-100%);
+  opacity: 0;
   z-index: 1;
 }
 
-.carousel-image {
+.carousel-item img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  border-radius: var(--border-radius);
-  background-color: rgb(7, 0, 0);
-  transition: transform 0.8s ease-in-out;
+  object-fit: cover;
+  border-radius: 0;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .carousel-caption {
@@ -1276,15 +1283,15 @@ button {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
-  background: rgba(0, 0, 0, 0.5);
+  width: 44px;
+  height: 44px;
+  background: rgba(0, 0, 0, 0.7);
   border: none;
-  border-radius: 50%;
+  border-radius: 0;
   cursor: pointer;
   z-index: 3;
   opacity: 0;
-  transition: opacity 0.4s ease-in-out, background-color 0.4s ease-in-out;
+  transition: all 0.3s ease-in-out;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1303,12 +1310,13 @@ button {
 }
 
 .carousel-control:hover {
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.9);
+  transform: translateY(-50%) scale(1.1);
 }
 
 .carousel-control svg {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   color: white;
 }
 
@@ -1318,22 +1326,26 @@ button {
 }
 
 @media (max-width: 768px) {
+  .carousel {
+    aspect-ratio: 16/9;
+  }
+  
   .carousel-control {
-    width: 35px;
-    height: 35px;
+    width: 36px;
+    height: 36px;
   }
   
   .carousel-control.prev {
-    left: 10px;
+    left: 12px;
   }
   
   .carousel-control.next {
-    right: 10px;
+    right: 12px;
   }
   
   .carousel-control svg {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
   }
 }
 
