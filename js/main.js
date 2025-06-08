@@ -455,3 +455,67 @@ document.getElementById('backToTop').addEventListener('click', function() {
     ease: "power2.inOut"
   });
 });
+
+// PDF Modal functionality
+const pdfUrl = 'documents/CV.pdf#toolbar=1&navpanes=0&scrollbar=0&view=FitH';
+const modal = document.getElementById('pdfModal');
+const pdfViewer = document.getElementById('pdfViewer');
+const closeModal = document.querySelector('.close-modal');
+const cvButtons = document.querySelectorAll('#cvButton, #cvButtonMain');
+
+// Function to open modal
+function openModal() {
+  const hamburgerMenu = document.querySelector('.hamburger-menu');
+  const mobileNavToggle = document.getElementById('mobileNavToggle');
+  if (hamburgerMenu) {
+    hamburgerMenu.style.visibility = 'hidden';
+  }
+  if (mobileNavToggle) {
+    mobileNavToggle.style.visibility = 'hidden';
+  }
+  modal.style.display = 'block';
+  setTimeout(() => {
+    modal.classList.add('show');
+  }, 10);
+  pdfViewer.src = pdfUrl;
+  document.body.style.overflow = 'hidden';
+}
+
+// Function to close modal
+function closeModalFunc() {
+  modal.classList.remove('show');
+  setTimeout(() => {
+    modal.style.display = 'none';
+    const hamburgerMenu = document.querySelector('.hamburger-menu');
+    const mobileNavToggle = document.getElementById('mobileNavToggle');
+    if (hamburgerMenu) {
+      hamburgerMenu.style.visibility = 'visible';
+    }
+    if (mobileNavToggle) {
+      mobileNavToggle.style.visibility = 'visible';
+    }
+    pdfViewer.src = '';
+    document.body.style.overflow = '';
+  }, 300);
+}
+
+// Event listeners
+cvButtons.forEach(button => {
+    button.addEventListener('click', openModal);
+});
+
+closeModal.addEventListener('click', closeModalFunc);
+
+// Close modal when clicking outside
+window.addEventListener('click', (event) => {
+    if (event.target === modal) {
+        closeModalFunc();
+    }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && modal.style.display === 'block') {
+        closeModalFunc();
+    }
+});
