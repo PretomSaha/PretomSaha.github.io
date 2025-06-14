@@ -105,7 +105,7 @@ body {
     display: none;
 }
 
-/* --- Modal Styles --- */
+/* Modal Styles */
 .modal {
     position: fixed;
     z-index: 1000;
@@ -134,10 +134,12 @@ body {
 .modal-content {
     position: relative;
     cursor: default;
-    max-width: 100%;
-    max-height: 100%;
-    line-height: 0;
-    transform: scale(0.9);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: scale(0.95);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
 }
@@ -147,21 +149,69 @@ body {
 }
 
 .modal-content img {
-    max-width: 100%;
-    max-height: 100%;
+    max-width: 90%;
+    max-height: 90vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
     border-radius: 4px;
     cursor: grab;
     transition: transform 0.1s ease;
     transform-origin: center;
     user-select: none;
     -webkit-user-drag: none;
+    margin: auto;
 }
 
 .modal-content img:active {
     cursor: grabbing;
 }
 
-/* --- Responsive Styles --- */
+/* Navigation Arrows */
+.nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    z-index: 1001;
+    border-radius: 0;
+}
+
+.nav-arrow:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.nav-arrow svg {
+    width: 24px;
+    height: 24px;
+    stroke: white;
+    stroke-width: 2;
+}
+
+.prev-arrow {
+    left: 20px;
+}
+
+.next-arrow {
+    right: 20px;
+}
+
+/* Hide arrows on mobile */
+@media screen and (max-width: 768px) {
+    .nav-arrow {
+        display: none;
+    }
+}
+
+/* Responsive Styles */
 @media (min-width: 768px) {
     .gallery-grid {
         grid-template-columns: repeat(2, 1fr);
