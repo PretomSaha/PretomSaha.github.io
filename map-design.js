@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalContent = document.querySelector('.modal-content');
     const prevArrow = document.querySelector('.prev-arrow');
     const nextArrow = document.querySelector('.next-arrow');
+    const zoomInBtn = document.querySelector('.zoom-in');
+    const zoomOutBtn = document.querySelector('.zoom-out');
 
     // Get all gallery items
     const galleryItems = document.querySelectorAll('.gallery-item');
@@ -43,6 +45,28 @@ document.addEventListener('DOMContentLoaded', () => {
         updateImageTransform();
     };
 
+    // Function to update image transform
+    const updateImageTransform = () => {
+        modalImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+    };
+
+    // Zoom functionality
+    zoomInBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        scale = Math.min(scale + 0.25, 3);
+        updateImageTransform();
+    });
+
+    zoomOutBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        scale = Math.max(scale - 0.25, 1);
+        if (scale === 1) {
+            translateX = 0;
+            translateY = 0;
+        }
+        updateImageTransform();
+    });
+
     // Function to open the modal
     const openModal = (imgSrc, index) => {
         currentImageIndex = index;
@@ -60,11 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeModal = () => {
         modal.classList.remove('show');
         resetTransform();
-    };
-
-    // Function to update image transform
-    const updateImageTransform = () => {
-        modalImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
     };
 
     // Function to navigate to next/previous image
@@ -167,14 +186,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // If we're zoomed in, handle as pan
                 if (scale > 1) {
-                    if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
-                        touchMoved = true;
-                    }
-                    translateX += deltaX;
-                    translateY += deltaY;
-                    touchStartX = touch.clientX;
-                    touchStartY = touch.clientY;
-                    updateImageTransform();
+                if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
+                    touchMoved = true;
+                }
+                translateX += deltaX;
+                translateY += deltaY;
+                touchStartX = touch.clientX;
+                touchStartY = touch.clientY;
+                updateImageTransform();
                 } else {
                     // If not zoomed, handle as swipe
                     swipeEndX = touch.clientX;

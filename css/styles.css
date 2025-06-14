@@ -1625,6 +1625,7 @@ body {
   text-decoration: none;
   color: var(--color-text);
   transition: all 0.3s ease;
+  border-radius: 0;
 }
 
 .gateway-card:hover {
@@ -1639,6 +1640,7 @@ body {
   flex-shrink: 0;
   overflow: hidden;
   position: relative;
+  border-radius: 0;
 }
 
 .gateway-card__image {
@@ -1646,6 +1648,7 @@ body {
   height: 100%;
   object-fit: cover;
   transition: transform 0.4s ease;
+  border-radius: 0;
 }
 
 .gateway-card:hover .gateway-card__image {
@@ -1657,6 +1660,7 @@ body {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  border-radius: 0;
 }
 
 .gateway-card__title {

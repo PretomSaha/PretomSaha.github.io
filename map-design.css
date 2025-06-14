@@ -250,4 +250,45 @@ body {
     .back-button {
         left: 3rem;
     }
+}
+
+/* Zoom Controls */
+.zoom-controls {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    display: none;
+    flex-direction: row;
+    gap: 10px;
+    z-index: 1001;
+}
+
+.zoom-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border-radius: 0;
+}
+
+.zoom-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.zoom-btn svg {
+    width: 24px;
+    height: 24px;
+    stroke: white;
+    stroke-width: 2;
+}
+
+@media screen and (min-width: 769px) {
+    .zoom-controls {
+        display: flex;
+    }
 } 
