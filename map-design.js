@@ -26,6 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let clickMoved = false;
     let swipeStartX = 0;
     let swipeEndX = 0;
+    let isDragging = false;
+    let initialScale = 1;
+    let minSwipeDistance = 50; // Minimum distance for swipe to trigger
 
     // Update isDesktop on window resize
     window.addEventListener('resize', () => {
@@ -83,7 +86,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Mouse events for panning and closing
     modalContent.addEventListener('mousedown', (e) => {
         if (e.target === modalImage) {
+            e.preventDefault();
+            e.stopPropagation();
             isPanning = true;
+            isDragging = false;
             startX = e.clientX - translateX;
             startY = e.clientY - translateY;
             modalImage.style.cursor = 'grabbing';
@@ -94,11 +100,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener('mousemove', (e) => {
         if (isPanning) {
+            e.preventDefault();
+            e.stopPropagation();
             const deltaX = e.clientX - startX;
             const deltaY = e.clientY - startY;
             
             // Check if the mouse has moved significantly
             if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
+                isDragging = true;
                 clickMoved = true;
             }
 
@@ -110,58 +119,126 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener('mouseup', (e) => {
         if (isPanning) {
+            e.preventDefault();
+            e.stopPropagation();
             isPanning = false;
             modalImage.style.cursor = 'grab';
             
             const clickEndTime = Date.now();
             const clickDuration = clickEndTime - clickStartTime;
 
-            // If the click was short and didn't move much, close the modal
-            if (clickDuration < 300 && !clickMoved && e.target === modalImage) {
+            // Only close if it's a quick click without dragging
+            if (clickDuration < 300 && !isDragging) {
                 closeModal();
             }
         }
     });
 
-    // Touch events for swipe navigation
+    // Touch events for mobile
     modalContent.addEventListener('touchstart', (e) => {
         if (e.target === modalImage) {
-            swipeStartX = e.touches[0].clientX;
+            e.preventDefault();
+            e.stopPropagation();
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
             touchStartTime = Date.now();
             touchMoved = false;
+            initialScale = scale;
+            swipeStartX = touch.clientX;
+
+            // Handle pinch zoom
+            if (e.touches.length === 2) {
+                initialPinchDistance = getDistance(e.touches[0], e.touches[1]);
+            }
         }
-    });
+    }, { passive: false });
 
     modalContent.addEventListener('touchmove', (e) => {
         if (e.target === modalImage) {
-            swipeEndX = e.touches[0].clientX;
-            const deltaX = swipeEndX - swipeStartX;
-            
-            // Check if the touch has moved significantly
-            if (Math.abs(deltaX) > 5) {
-                touchMoved = true;
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (e.touches.length === 1) {
+                // Panning or Swiping
+                const touch = e.touches[0];
+                const deltaX = touch.clientX - touchStartX;
+                const deltaY = touch.clientY - touchStartY;
+                
+                // If we're zoomed in, handle as pan
+                if (scale > 1) {
+                    if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
+                        touchMoved = true;
+                    }
+                    translateX += deltaX;
+                    translateY += deltaY;
+                    touchStartX = touch.clientX;
+                    touchStartY = touch.clientY;
+                    updateImageTransform();
+                } else {
+                    // If not zoomed, handle as swipe
+                    swipeEndX = touch.clientX;
+                    if (Math.abs(deltaX) > 5) {
+                        touchMoved = true;
+                    }
+                }
+            } else if (e.touches.length === 2) {
+                // Pinch zoom
+                currentPinchDistance = getDistance(e.touches[0], e.touches[1]);
+                const pinchRatio = currentPinchDistance / initialPinchDistance;
+                scale = Math.min(Math.max(initialScale * pinchRatio, 0.5), 3);
+                updateImageTransform();
             }
         }
-    });
+    }, { passive: false });
 
     modalContent.addEventListener('touchend', (e) => {
         if (e.target === modalImage) {
+            e.preventDefault();
+            e.stopPropagation();
             const touchEndTime = Date.now();
             const touchDuration = touchEndTime - touchStartTime;
             const swipeDistance = swipeEndX - swipeStartX;
 
-            // If the touch was short and moved significantly, navigate
-            if (touchDuration < 300 && touchMoved) {
-                if (swipeDistance > 50) {
+            // Handle swipe navigation if not zoomed in
+            if (scale <= 1 && Math.abs(swipeDistance) > minSwipeDistance && touchMoved) {
+                if (swipeDistance > 0) {
                     // Swipe right - go to previous
                     navigateImage(-1);
-                } else if (swipeDistance < -50) {
+                } else {
                     // Swipe left - go to next
                     navigateImage(1);
                 }
+                return;
+            }
+
+            // If the touch was short and didn't move much, close the modal
+            if (touchDuration < 300 && !touchMoved) {
+                closeModal();
             }
         }
-    });
+    }, { passive: false });
+
+    // Prevent default touch behavior on the modal
+    modal.addEventListener('touchmove', (e) => {
+        if (e.target === modalImage) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+
+    // Prevent double-tap zoom on mobile
+    modalContent.addEventListener('touchend', (e) => {
+        if (e.target === modalImage) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+
+    // Add tap-to-close on mobile background
+    modal.addEventListener('touchend', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    }, { passive: false });
 
     // Mouse wheel for zooming
     modalContent.addEventListener('wheel', (e) => {
@@ -178,7 +255,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         updateImageTransform();
-    });
+    }, { passive: false });
 
     // Add click event to each gallery item
     galleryItems.forEach((item, index) => {
@@ -200,12 +277,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Event listeners to close the modal
-    // Close when clicking anywhere on the screen in desktop view
     modal.addEventListener('click', (e) => {
         if (isDesktop) {
-            // Don't close if clicking on navigation arrows
+            // Don't close if clicking on navigation arrows or if we're panning
             if (e.target === prevArrow || e.target === nextArrow || 
-                e.target.closest('.nav-arrow')) {
+                e.target.closest('.nav-arrow') || isPanning || isDragging || 
+                e.target === modalImage) {
                 return;
             }
             closeModal();
