@@ -1,10 +1,11 @@
 /* Base Variables & Theme */
 :root {
-    --color-background: #FAF9F5;
+    --color-background: #fff;
     --color-text: #141413;
     --color-text-light: #666666;
     --color-primary: #141413;
     --color-accent: #898989;
+    --color-deepred: #C1121F;
     --font-serif: "Merriweather", serif;
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --shadow-lg: 0 4px 6px rgba(0, 0, 0, 0.06);
@@ -33,27 +34,32 @@ body {
     left: 2rem;
     width: 3.2rem;
     height: 3.2rem;
-    background-color: #898989;
-    border: none;
+    background: var(--color-deepred);
+    color: #fff;
+    border: 2px solid var(--color-deepred);
     border-radius: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    transition: var(--transition-smooth);
-    box-shadow: var(--shadow-md);
+    transition: var(--transition-smooth), box-shadow 0.3s;
+    box-shadow: 0 4px 16px rgba(193, 18, 31, 0.18), var(--shadow-md);
     z-index: 100;
+    outline: none;
 }
 
-.back-button:hover {
-    background-color: var(--color-primary);
-    transform: scale(1.05);
+.back-button:hover, .back-button:focus {
+    background: #a00;
+    box-shadow: 0 6px 24px rgba(193, 18, 31, 0.28), var(--shadow-lg);
+    transform: scale(1.08);
 }
 
 .back-button svg {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     fill: #fff;
+    stroke: #fff;
+    stroke-width: 2.2;
 }
 
 @media screen and (max-width: 768px) {
