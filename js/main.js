@@ -174,6 +174,38 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  // ----- Field Trip Tabs -----
+  function initFieldTripTabs() {
+    const tabContainer = document.querySelector('.field-trip-tabs');
+    if (!tabContainer) return;
+
+    const tabLinks = tabContainer.querySelectorAll('.tab-link');
+    const tabContents = document.querySelectorAll('.field-trip-content-wrapper .tab-content');
+
+    tabContainer.addEventListener('click', (e) => {
+      const link = e.target.closest('.tab-link');
+      if (!link) return;
+      e.preventDefault();
+      const tabId = link.dataset.tab;
+      const newActiveContent = document.getElementById(tabId);
+      if (!newActiveContent) return;
+      // Update tab links
+      tabLinks.forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+      // Hide all tab contents and remove active
+      tabContents.forEach(content => {
+        content.classList.remove('active');
+        content.style.display = 'none';
+      });
+      // Show and animate the new tab content
+      newActiveContent.style.display = 'block';
+      requestAnimationFrame(() => {
+        newActiveContent.classList.add('active');
+      });
+    });
+  }
+  initFieldTripTabs();
+
   // ----- Carousel Functionality -----
   function initCarousel() {
     const carousels = document.querySelectorAll('.carousel, .drawing-carousel');
