@@ -182,6 +182,79 @@ document.addEventListener('DOMContentLoaded', function() {
     const tabLinks = tabContainer.querySelectorAll('.tab-link');
     const tabContents = document.querySelectorAll('.field-trip-content-wrapper .tab-content');
 
+    // Swipe gesture support for mobile (tab bar)
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    tabContainer.addEventListener('touchstart', function(e) {
+      touchStartX = e.changedTouches[0].screenX;
+    }, false);
+
+    tabContainer.addEventListener('touchend', function(e) {
+      touchEndX = e.changedTouches[0].screenX;
+      handleGesture();
+    }, false);
+
+    // Swipe gesture support for mobile (content area)
+    const contentWrapper = document.querySelector('.field-trip-content-wrapper');
+    if (contentWrapper) {
+      contentWrapper.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+      }, false);
+      contentWrapper.addEventListener('touchend', function(e) {
+        touchEndX = e.changedTouches[0].screenX;
+        handleGesture();
+      }, false);
+    }
+
+    function switchTabWithAnimation(newIndex, direction) {
+      const activeIndex = Array.from(tabLinks).findIndex(l => l.classList.contains('active'));
+      if (activeIndex === newIndex) return;
+      const currentTab = tabLinks[activeIndex];
+      const nextTab = tabLinks[newIndex];
+      const currentContent = tabContents[activeIndex];
+      const nextContent = tabContents[newIndex];
+      // Remove any previous animation classes
+      tabContents.forEach(content => {
+        content.classList.remove('slide-in-left', 'slide-in-right', 'slide-out-left', 'slide-out-right');
+      });
+      // Animate out current content
+      if (direction === 'left') {
+        currentContent.classList.add('slide-out-left');
+        nextContent.classList.add('slide-in-right');
+      } else {
+        currentContent.classList.add('slide-out-right');
+        nextContent.classList.add('slide-in-left');
+      }
+      // Hide all tab contents after animation
+      setTimeout(() => {
+        tabLinks.forEach(l => l.classList.remove('active'));
+        nextTab.classList.add('active');
+        tabContents.forEach(content => {
+          content.classList.remove('active');
+          content.style.display = 'none';
+        });
+        nextContent.style.display = 'block';
+        requestAnimationFrame(() => {
+          nextContent.classList.add('active');
+        });
+      }, 400); // Match animation duration
+    }
+
+    function handleGesture() {
+      const activeIndex = Array.from(tabLinks).findIndex(l => l.classList.contains('active'));
+      if (touchEndX < touchStartX - 40) { // Swipe left
+        if (activeIndex < tabLinks.length - 1) {
+          switchTabWithAnimation(activeIndex + 1, 'left');
+        }
+      }
+      if (touchEndX > touchStartX + 40) { // Swipe right
+        if (activeIndex > 0) {
+          switchTabWithAnimation(activeIndex - 1, 'right');
+        }
+      }
+    }
+
     tabContainer.addEventListener('click', (e) => {
       const link = e.target.closest('.tab-link');
       if (!link) return;
@@ -189,19 +262,11 @@ document.addEventListener('DOMContentLoaded', function() {
       const tabId = link.dataset.tab;
       const newActiveContent = document.getElementById(tabId);
       if (!newActiveContent) return;
-      // Update tab links
-      tabLinks.forEach(l => l.classList.remove('active'));
-      link.classList.add('active');
-      // Hide all tab contents and remove active
-      tabContents.forEach(content => {
-        content.classList.remove('active');
-        content.style.display = 'none';
-      });
-      // Show and animate the new tab content
-      newActiveContent.style.display = 'block';
-      requestAnimationFrame(() => {
-        newActiveContent.classList.add('active');
-      });
+      const newIndex = Array.from(tabLinks).indexOf(link);
+      const activeIndex = Array.from(tabLinks).findIndex(l => l.classList.contains('active'));
+      if (newIndex === activeIndex) return;
+      const direction = newIndex > activeIndex ? 'left' : 'right';
+      switchTabWithAnimation(newIndex, direction);
     });
   }
   initFieldTripTabs();
