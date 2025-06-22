@@ -42,7 +42,9 @@ body, .sidebar, .main-container, .research-content, .reference-item, .btn-second
   background-color: #fff !important;
 }
 h2 {
-  color: #2B5797 !important;
+  font-family: 'fonnts.com-Ivy-Presto-Headline-Semi-Bold', serif !important;
+  font-size: 2.1rem !important;
+  color: #000 !important;
 }
 
 body {
@@ -370,7 +372,7 @@ button {
   top: 0;
   bottom: 0;
   width: 2px;
-  background-color: var(--color-accent);
+  background-color: #c1121f;
   border-radius: 3px;
   opacity: 0.1;
   transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1871,7 +1873,7 @@ body {
 /* Apply modern transitions to list items for smooth hover effects */
 .nav-container ul li {
     transition: var(--transition-fast);
-    border-radius: var(--border-radius); /* Apply border-radius for smooth hover effect */
+    border-radius: 0 !important; /* Apply border-radius for smooth hover effect */
 }
 
 /* Modern hover style for the entire list item (li) */
@@ -1880,7 +1882,7 @@ body {
     cursor: pointer; /* Indicate it's clickable */
     box-shadow: var(--shadow-md); /* Subtle shadow on hover */
     transform: translateY(-2px); /* Slight lift effect on hover */
-    border-radius: var(--border-radius); /* Ensure border-radius is applied on hover */
+    border-radius: 0 !important; /* Ensure border-radius is applied on hover */
 }
 
 /* Ensure .nav-link inside the hovered li remains transparent but applies its transform and color */
@@ -2058,4 +2060,10 @@ body {
     grid-template-columns: 1fr !important;
     gap: 1rem;
   }
+}
+
+.nav-container ul li,
+.nav-link,
+.nav-container ul li:hover {
+  border-radius: 0 !important;
 }
