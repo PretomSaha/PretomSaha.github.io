@@ -1272,12 +1272,12 @@ button {
 }
 
 .fieldtrip-content {
+  background-color: #F9F9F9 !important;
+  border-radius: 0 !important;
   display: grid;
   grid-template-columns: 40% 1fr;
   gap: 2rem;
-  background-color: transparent;
   padding: 0.5rem;
-  border-radius: var(--border-radius);
   box-shadow: none;
   align-items: center;
 }
@@ -1310,6 +1310,8 @@ button {
 }
 
 .fieldtrip-details ul {
+  width: 97%;
+  padding-right: 3%;
   list-style-type: none;
   padding-left: 0;
   margin: 0;
