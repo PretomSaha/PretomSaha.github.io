@@ -1763,9 +1763,7 @@ body {
   border-radius: 0;
 }
 
-.gateway-card:hover .gateway-card__image {
-  transform: scale(1.05);
-}
+/* .gateway-card:hover .gateway-card__image { transform: scale(1.05); } */
 
 .gateway-card__content {
   padding: 1.5rem;
