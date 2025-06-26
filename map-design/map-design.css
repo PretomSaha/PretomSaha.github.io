@@ -32,31 +32,28 @@ body {
     position: fixed;
     bottom: 2rem;
     left: 2rem;
-    width: 3.2rem;
-    height: 3.2rem;
-    background: var(--color-deepred);
+    width: 2.5rem;
+    height: 2.5rem;
+    background: #C1121F;
     color: #fff;
-    border: 2px solid var(--color-deepred);
+    border: 2px solid #C1121F;
     border-radius: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    transition: var(--transition-smooth), box-shadow 0.3s;
-    box-shadow: 0 4px 16px rgba(193, 18, 31, 0.18), var(--shadow-md);
+    transition: background 0.3s;
     z-index: 100;
     outline: none;
 }
 
 .back-button:hover, .back-button:focus {
     background: #a00;
-    box-shadow: 0 6px 24px rgba(193, 18, 31, 0.28), var(--shadow-lg);
-    transform: scale(1.08);
 }
 
 .back-button svg {
-    width: 22px;
-    height: 22px;
+    width: 19px;
+    height: 19px;
     fill: #fff;
     stroke: #fff;
     stroke-width: 2.2;
