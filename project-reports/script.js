@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initReferenceHandling();
     initFigureTableReferences();
     initMobileNavToggle();
+    initSidebarAutoCloseOnTOCClick();
 });
 
 /**
@@ -202,4 +203,25 @@ function initMobileNavToggle() {
             mainContainer.classList.toggle('sidebar-active');
         });
     }
+}
+
+/**
+ * Auto-close sidebar on TOC click (mobile/tablet)
+ * For BhasanChar.html sidebar
+ */
+function initSidebarAutoCloseOnTOCClick() {
+    const tocLinks = document.querySelectorAll('#TOC a[href^="#"]');
+    const sidebar = document.querySelector('.sidebar');
+    const mobileNavToggle = document.getElementById('mobileNavToggle');
+    const mainContainer = document.querySelector('.main-container');
+    
+    tocLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            if (window.innerWidth <= 900 && sidebar && sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+                if (mobileNavToggle) mobileNavToggle.classList.remove('active');
+                if (mainContainer) mainContainer.classList.remove('sidebar-active');
+            }
+        });
+    });
 }

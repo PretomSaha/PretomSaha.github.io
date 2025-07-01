@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const projectCard = btn.closest('.project-card');
       const title = projectCard.querySelector('.project-title').textContent.trim();
       if (title === 'Dynamics of Shoreline Changes on Bhasan Char Island') {
-        window.open('/project-reports/BhasanChar.html', '_blank');
+        window.location.href = '/project-reports/BhasanChar.html';
       } else {
         alert('Project details coming soon!');
       }
