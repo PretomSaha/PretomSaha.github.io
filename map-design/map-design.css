@@ -297,3 +297,12 @@ body {
         display: flex;
     }
 } 
+
+/* Show full image for only the third gallery item */
+.gallery-item:nth-of-type(3) img {
+    object-fit: contain !important;
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: unset !important;
+    background: #fff;
+} 
