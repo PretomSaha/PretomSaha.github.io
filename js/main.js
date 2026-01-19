@@ -558,7 +558,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // PDF Modal functionality
-const pdfUrl = 'documents/CV.pdf#toolbar=1&navpanes=0&scrollbar=0&view=FitH';
+const pdfUrl = `${encodeURI('documents/Curriculum Vitae.pdf')}#toolbar=1&navpanes=0&scrollbar=0&view=FitH`;
 const modal = document.getElementById('pdfModal');
 const pdfViewer = document.getElementById('pdfViewer');
 const closeModal = document.querySelector('.close-modal');
